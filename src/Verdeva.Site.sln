@@ -1,0 +1,42 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2010
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Verdeva.Sites", "Verdeva.Site\Verdeva.Sites.csproj", "{AC787AB1-5861-4373-A667-162288994043}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Verdeva.Sites.Antennae", "Verdeva.Site.Antennae\Verdeva.Sites.Antennae.csproj", "{0BFAEEC5-F010-4FC3-8CC1-3FF4F526B0EB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "lib", "lib", "{69980071-2D31-497C-AC60-2FDF62DA2FCC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Verdeva.Cloud.API", "..\Verdeva\verdeva.cloud\src\Verdeva.Cloud.API\Verdeva.Cloud.API.csproj", "{B029F770-6067-4E19-B5C5-8BB069DBDD28}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AC787AB1-5861-4373-A667-162288994043}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC787AB1-5861-4373-A667-162288994043}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC787AB1-5861-4373-A667-162288994043}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC787AB1-5861-4373-A667-162288994043}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0BFAEEC5-F010-4FC3-8CC1-3FF4F526B0EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0BFAEEC5-F010-4FC3-8CC1-3FF4F526B0EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0BFAEEC5-F010-4FC3-8CC1-3FF4F526B0EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0BFAEEC5-F010-4FC3-8CC1-3FF4F526B0EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B029F770-6067-4E19-B5C5-8BB069DBDD28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B029F770-6067-4E19-B5C5-8BB069DBDD28}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B029F770-6067-4E19-B5C5-8BB069DBDD28}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B029F770-6067-4E19-B5C5-8BB069DBDD28}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B029F770-6067-4E19-B5C5-8BB069DBDD28} = {69980071-2D31-497C-AC60-2FDF62DA2FCC}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {20AA5605-F4E9-4249-87D0-8549ABB5B992}
+	EndGlobalSection
+EndGlobal
