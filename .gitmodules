@@ -1,0 +1,3 @@
+[submodule "Verdeva"]
+	path = Verdeva
+	url = git@github.com:NowBI/Verdeva.git
