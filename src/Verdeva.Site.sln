@@ -11,6 +11,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "lib", "lib", "{69980071-2D3
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Verdeva.Cloud.API", "..\Verdeva\verdeva.cloud\src\Verdeva.Cloud.API\Verdeva.Cloud.API.csproj", "{B029F770-6067-4E19-B5C5-8BB069DBDD28}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Verdeva.Sites.Antennae.Transcore", "Verdeva.Sites.Antennae.Transcore\Verdeva.Sites.Antennae.Transcore.csproj", "{23482E3E-480A-4722-B960-120A7FE73E3D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +31,10 @@ Global
 		{B029F770-6067-4E19-B5C5-8BB069DBDD28}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B029F770-6067-4E19-B5C5-8BB069DBDD28}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B029F770-6067-4E19-B5C5-8BB069DBDD28}.Release|Any CPU.Build.0 = Release|Any CPU
+		{23482E3E-480A-4722-B960-120A7FE73E3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23482E3E-480A-4722-B960-120A7FE73E3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23482E3E-480A-4722-B960-120A7FE73E3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23482E3E-480A-4722-B960-120A7FE73E3D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
