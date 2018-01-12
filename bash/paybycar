@@ -21,13 +21,13 @@ DESC="paybycar service"
 EXEC="/usr/bin/jsvc"
 
 # The path to the folder containing paybycar.jar
-FILE_PATH="/home/cjdibbs/git/Verdeva.Site/out/artifacts/$NAME"
+FILE_PATH="/usr/local/$NAME"
 
 # The path to the folder containing the java runtime
 JAVA_HOME="/usr/lib/jvm/default-java"
 
 # Our classpath including our jar file and the Apache Commons Daemon library
-CLASS_PATH="./$NAME.jar:./commons-daemon-1.0.15.jar"
+CLASS_PATH="*"
 
 echo $CLASS_PATH
 
@@ -35,10 +35,10 @@ echo $CLASS_PATH
 CLASS="com.paybycar.site.SiteDaemon"
 
 # Any command line arguments to be passed to the our Java Daemon implementations init() method 
-ARGS="myArg1 myArg2 myArg3"
+ARGS="--api-url https://paybycar-qa.nowintelligence.com --discover --antenna-id 1"
 
 #The user to run the daemon as
-USER="root"
+USER="cjdibbs"
 
 # The file that will contain our process identification number (pid) for other scripts/programs that need to access it.
 PID="/var/run/$NAME.pid"
@@ -52,8 +52,7 @@ LOG_ERR="$FILE_PATH/err/$NAME.err"
 jsvc_exec()
 {   
     cd $FILE_PATH
-    echo  "    $EXEC -home $JAVA_HOME -cp $CLASS_PATH -user $USER -outfile $LOG_OUT -errfile $LOG_ERR -pidfile $PID $1 $CLASS $ARGS"
-    $EXEC -cwd $FILE_PATH -home $JAVA_HOME -cp $CLASS_PATH -user $USER -outfile $LOG_OUT -errfile $LOG_ERR -pidfile $PID $1 $CLASS $ARGS
+    $EXEC -cwd $FILE_PATH -home $JAVA_HOME -cp "$CLASS_PATH" -user $USER -outfile $LOG_OUT -errfile $LOG_ERR -pidfile $PID $1 $CLASS $ARGS
 }
 
 case "$1" in
