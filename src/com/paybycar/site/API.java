@@ -3,12 +3,20 @@ package com.paybycar.site;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.ssl.SSLContextBuilder;
+import org.apache.http.ssl.SSLContexts;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import javax.net.ssl.SSLContext;
 import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
@@ -21,9 +29,21 @@ public class API {
     HttpClient client;
     SimpleDateFormat dateFormatGmt;
 
-    public API(String server){
+    public API(String server) throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException, UnrecoverableKeyException {
         url = server + endpoint;
-        client = HttpClientBuilder.create().build();
+
+        SSLContext sslContext = SSLContexts.custom()
+                .loadKeyMaterial(SiteDaemon.getKeystore(), SiteDaemon.getKeyStorePassword())
+                .loadTrustMaterial(null, (chain, authType) -> {
+                    chain[0].checkValidity();
+                    return true;
+                })
+                .build();
+
+        client = HttpClientBuilder.create()
+                .setSSLContext(sslContext)
+                .setSSLHostnameVerifier(new NoopHostnameVerifier())
+                .build();
 
         dateFormatGmt = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss");
         dateFormatGmt.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -42,6 +62,7 @@ public class API {
 
         request.setHeader("Content-type", "application/json");
         request.setEntity(new StringEntity(message.toString()));
+        request.
 
         System.out.printf("send %s to %s\n", message.toString(), url);
 

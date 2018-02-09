@@ -41,13 +41,14 @@ public class SimpleTagReader implements ITagReader, Runnable {
             byte[] buffer = new byte[1024];
 
             char last = 0;
-            char datum = 0;
+            char datum;
             int len;
             while ((len = this.data.read(buffer)) > -1){
                 for(int ii = 0; ii < len; ii ++) {
                     datum = (char)buffer[ii];
                     switch (datum) {
                         case SOM:
+                            System.out.println("Tag Found");
                             tag = new StringBuffer();
                             break;
                         case CR:
@@ -66,6 +67,9 @@ public class SimpleTagReader implements ITagReader, Runnable {
                     last = datum;
                 }
             }
-        } catch (IOException e) { }
+        } catch (IOException e) {
+            System.out.println("error reading tag");
+            e.printStackTrace(System.out);
+        }
     }
 }

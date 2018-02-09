@@ -8,7 +8,11 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.daemon.Daemon;
 import org.apache.commons.daemon.DaemonContext;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
+import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -31,6 +35,17 @@ public class SiteDaemon implements Daemon {
         options.addOption("p", "port", true, "port to connect to the antenna on");
         options.addOption("d", "discover", false, "discover the port");
         options.addOption("id", "antenna-id", true, "Id of the antenna");
+    }
+
+    @NotNull
+    public static KeyStore getKeystore() throws KeyStoreException {
+        return KeyStore.getInstance("client");
+    }
+
+    @NotNull
+    @Contract(pure = true)
+    public static char[] getKeyStorePassword() {
+        return "pass@word1".toCharArray();
     }
 
     @Override
@@ -58,7 +73,10 @@ public class SiteDaemon implements Daemon {
     @Override
     public void start() throws Exception {
         EncompassSerial antenna = new EncompassSerial();
+        System.out.println("Creating API endpoint");
         API api = new API(this.appUrl);
+
+        System.out.println("Opening serial connection");
 
         if(this.descover)
             reader = antenna.open();
@@ -74,15 +92,15 @@ public class SiteDaemon implements Daemon {
                 try {
                     tag = tags.poll(200, TimeUnit.MILLISECONDS);
                 } catch (InterruptedException e) {
-                    e.printStackTrace(System.err);
+                    e.printStackTrace(System.out);
                 }
                 if(tag != null)
                     try {
                         System.out.println(tag);
                         api.post(antennaId, tag.split("&")[0]);
                     } catch (Exception e){
-                        System.err.println(e.getMessage());
-                        e.printStackTrace(System.err);
+                        System.out.println(e.getMessage());
+                        e.printStackTrace(System.out);
                     }
             }
         });
