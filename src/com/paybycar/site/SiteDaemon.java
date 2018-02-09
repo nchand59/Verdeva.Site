@@ -17,7 +17,9 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 public class SiteDaemon implements Daemon {
-    private Thread myThread;
+    private Thread scanningThread;
+    private Thread heardbeatThread;
+
     ITagReader reader = null;
 
     private boolean stopped = false;
@@ -27,6 +29,7 @@ public class SiteDaemon implements Daemon {
     boolean descover;
     String port;
     int antennaId;
+    API api;
 
     public SiteDaemon(){
         options = new Options();
@@ -72,9 +75,11 @@ public class SiteDaemon implements Daemon {
 
     @Override
     public void start() throws Exception {
+
+        api = new API(this.appUrl);
+
         EncompassSerial antenna = new EncompassSerial();
         System.out.println("Creating API endpoint");
-        API api = new API(this.appUrl);
 
         System.out.println("Opening serial connection");
 
@@ -85,7 +90,7 @@ public class SiteDaemon implements Daemon {
 
         BlockingQueue<String> tags = reader.tags();
 
-        myThread = new Thread(() -> {
+        scanningThread = new Thread(() -> {
             System.out.println("Searching for TDM tags...");
             while(!stopped){
                 String tag = null;
@@ -104,15 +109,55 @@ public class SiteDaemon implements Daemon {
                     }
             }
         });
+
+        heardbeatThread = new Thread(() -> {
+            long lastPing = System.currentTimeMillis();
+
+            try {
+                System.out.println("start ping");
+                api.heartbeat(antennaId, 1);
+            } catch (Exception e) {
+                System.err.println(e.getMessage());
+                e.printStackTrace();
+            }
+
+            while(!stopped){
+                long now = System.currentTimeMillis();
+                if( ((now - lastPing) / 60000.0) > 3){
+                    try {
+                        lastPing = now;
+                        api.heartbeat(antennaId, 2);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
         reader.start();
-        myThread.start();
+        scanningThread.start();
+        heardbeatThread.start();
     }
 
     @Override
     public void stop() throws Exception {
         stopped = true;
         try{
-            myThread.join(1000);
+            try {
+                System.out.println("stop ping");
+                api.heartbeat(antennaId, 3);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            scanningThread.join(1000);
+            heardbeatThread.join(1000);
+
             reader.stop();
         }catch(InterruptedException e){
             System.err.println(e.getMessage());
@@ -122,6 +167,6 @@ public class SiteDaemon implements Daemon {
 
     @Override
     public void destroy() {
-        myThread = null;
+        scanningThread = null;
     }
 }

@@ -6,7 +6,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.SSLContexts;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -25,17 +24,23 @@ public class API {
     private static final String endpoint = "/api/transponders";
 
     String url;
+    String server;
 
     HttpClient client;
     SimpleDateFormat dateFormatGmt;
 
     public API(String server) throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException, UnrecoverableKeyException {
         url = server + endpoint;
+        this.server = server;
 
         SSLContext sslContext = SSLContexts.custom()
-                .loadKeyMaterial(SiteDaemon.getKeystore(), SiteDaemon.getKeyStorePassword())
                 .loadTrustMaterial(null, (chain, authType) -> {
-                    chain[0].checkValidity();
+
+                    for(int ii = 0; ii< chain.length; ii++){
+                        chain[ii].checkValidity();
+                        System.out.printf("%s: %s\n", chain[ii].getIssuerDN().getName(), chain[ii].getSerialNumber().toString());
+                    }
+
                     return true;
                 })
                 .build();
@@ -49,6 +54,24 @@ public class API {
         dateFormatGmt.setTimeZone(TimeZone.getTimeZone("GMT"));
     }
 
+    public void heartbeat(int antennaId, int statusCode) throws JSONException, IOException {
+        String url = server + "/api/appliance/heartbeat";
+
+        System.out.printf("%s %d %d\n", url, antennaId, statusCode);
+
+        HttpPost request = new HttpPost(url);
+
+        JSONObject message = new JSONObject()
+                .put("AntennaId", antennaId)
+                .put("StatusCode", statusCode);
+
+        request.setHeader("Content-type", "application/json");
+        request.setEntity(new StringEntity(message.toString()));
+
+        HttpResponse response = client.execute(request);
+
+        System.out.printf("heardbeat: %d\n", response.getStatusLine().getStatusCode());
+    }
     public void post(int antennaId, String transponderId) throws JSONException, IOException {
         HttpPost request = new HttpPost(url);
 
@@ -62,7 +85,6 @@ public class API {
 
         request.setHeader("Content-type", "application/json");
         request.setEntity(new StringEntity(message.toString()));
-        request.
 
         System.out.printf("send %s to %s\n", message.toString(), url);
 
