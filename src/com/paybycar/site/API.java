@@ -16,6 +16,7 @@ import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
@@ -25,23 +26,26 @@ public class API {
 
     String url;
     String server;
+    String apiKey;
 
     HttpClient client;
     SimpleDateFormat dateFormatGmt;
 
-    public API(String server) throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException, UnrecoverableKeyException {
+    public API(String server, String apiKey) throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException, UnrecoverableKeyException, CertificateException, IOException {
         url = server + endpoint;
         this.server = server;
+        this.apiKey = apiKey;
 
         SSLContext sslContext = SSLContexts.custom()
                 .loadTrustMaterial(null, (chain, authType) -> {
 
                     for(int ii = 0; ii< chain.length; ii++){
                         chain[ii].checkValidity();
-                        System.out.printf("%s: %s\n", chain[ii].getIssuerDN().getName(), chain[ii].getSerialNumber().toString());
+                        System.out.printf("%s: %s\n", chain[ii].getSubjectDN().getName(), chain[ii].getSerialNumber().toString());
                     }
 
-                    return true;
+                    return chain[0].getSubjectDN().getName() == "CN=*.nowintelligence.com, O=\"Now Business Intelligence, Inc.\", L=Boston, ST=Massachusetts, C=US";
+
                 })
                 .build();
 
@@ -63,7 +67,8 @@ public class API {
 
         JSONObject message = new JSONObject()
                 .put("AntennaId", antennaId)
-                .put("StatusCode", statusCode);
+                .put("StatusCode", statusCode)
+                .put("Key", apiKey);
 
         request.setHeader("Content-type", "application/json");
         request.setEntity(new StringEntity(message.toString()));
@@ -80,8 +85,9 @@ public class API {
         JSONObject message = new JSONObject()
                 .put("AntennaId", antennaId)
                 .put("TransponderId", transponderId)
-                .put("TransponderType", 2)
-                .put("TimeStamp", dateFormatGmt.format(now)); // TDM
+                .put("TransponderType", 2) // TDM
+                .put("TimeStamp", dateFormatGmt.format(now))
+                .put("Key", apiKey);
 
         request.setHeader("Content-type", "application/json");
         request.setEntity(new StringEntity(message.toString()));
@@ -90,6 +96,6 @@ public class API {
 
         HttpResponse response = client.execute(request);
 
-        System.out.println(response.getStatusLine().getStatusCode());
+        System.out.println("Tag Response: " + response.getStatusLine().getStatusCode());
     }
 }

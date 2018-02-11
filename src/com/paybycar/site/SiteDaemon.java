@@ -8,11 +8,7 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.daemon.Daemon;
 import org.apache.commons.daemon.DaemonContext;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 
-import java.security.KeyStore;
-import java.security.KeyStoreException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -30,6 +26,7 @@ public class SiteDaemon implements Daemon {
     String port;
     int antennaId;
     API api;
+    String key;
 
     public SiteDaemon(){
         options = new Options();
@@ -38,17 +35,7 @@ public class SiteDaemon implements Daemon {
         options.addOption("p", "port", true, "port to connect to the antenna on");
         options.addOption("d", "discover", false, "discover the port");
         options.addOption("id", "antenna-id", true, "Id of the antenna");
-    }
-
-    @NotNull
-    public static KeyStore getKeystore() throws KeyStoreException {
-        return KeyStore.getInstance("client");
-    }
-
-    @NotNull
-    @Contract(pure = true)
-    public static char[] getKeyStorePassword() {
-        return "pass@word1".toCharArray();
+        options.addOption("k", "api-key", true, "api key to access the api");
     }
 
     @Override
@@ -66,9 +53,10 @@ public class SiteDaemon implements Daemon {
         appUrl = cmd.getOptionValue("a");
         descover = cmd.hasOption("d");
         antennaId = Integer.parseInt(cmd.getOptionValue("id"));
+        key = cmd.getOptionValue("k");
 
-       if(cmd.hasOption("p"))
-           port = cmd.getOptionValue("p");
+        if(cmd.hasOption("p"))
+            port = cmd.getOptionValue("p");
 
        System.out.printf("%s, %n", appUrl, antennaId);
     }
@@ -76,7 +64,7 @@ public class SiteDaemon implements Daemon {
     @Override
     public void start() throws Exception {
 
-        api = new API(this.appUrl);
+        api = new API(this.appUrl, this.key);
 
         EncompassSerial antenna = new EncompassSerial();
         System.out.println("Creating API endpoint");
