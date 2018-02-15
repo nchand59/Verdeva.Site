@@ -11,12 +11,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.net.ssl.SSLContext;
+import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableKeyException;
+import java.security.*;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
@@ -31,6 +31,16 @@ public class API {
     HttpClient client;
     SimpleDateFormat dateFormatGmt;
 
+    private static String getThumbprint(X509Certificate cert)
+            throws NoSuchAlgorithmException, CertificateEncodingException {
+        MessageDigest md = MessageDigest.getInstance("SHA-1");
+        byte[] der = cert.getEncoded();
+        md.update(der);
+        byte[] digest = md.digest();
+        String digestHex = DatatypeConverter.printHexBinary(digest);
+        return digestHex;
+    }
+
     public API(String server, String apiKey) throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException, UnrecoverableKeyException, CertificateException, IOException {
         url = server + endpoint;
         this.server = server;
@@ -38,14 +48,8 @@ public class API {
 
         SSLContext sslContext = SSLContexts.custom()
                 .loadTrustMaterial(null, (chain, authType) -> {
-
-                    for(int ii = 0; ii< chain.length; ii++){
-                        chain[ii].checkValidity();
-                        System.out.printf("%s: %s\n", chain[ii].getSubjectDN().getName(), chain[ii].getSerialNumber().toString());
-                    }
-
-                    return chain[0].getSubjectDN().getName() == "CN=*.nowintelligence.com, O=\"Now Business Intelligence, Inc.\", L=Boston, ST=Massachusetts, C=US";
-
+                    chain[0].checkValidity();
+                    return true;
                 })
                 .build();
 
@@ -70,8 +74,12 @@ public class API {
                 .put("StatusCode", statusCode)
                 .put("Key", apiKey);
 
+        String json = message.toString();
+
+        System.out.printf("heartbeat: %s\n", json);
+
         request.setHeader("Content-type", "application/json");
-        request.setEntity(new StringEntity(message.toString()));
+        request.setEntity(new StringEntity(json));
 
         HttpResponse response = client.execute(request);
 

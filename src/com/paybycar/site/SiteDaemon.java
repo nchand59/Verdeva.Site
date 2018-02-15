@@ -58,7 +58,7 @@ public class SiteDaemon implements Daemon {
         if(cmd.hasOption("p"))
             port = cmd.getOptionValue("p");
 
-       System.out.printf("%s, %n", appUrl, antennaId);
+       System.out.printf("url:%s antenna:%n key:%s", appUrl, antennaId, key );
     }
 
     @Override
@@ -99,6 +99,8 @@ public class SiteDaemon implements Daemon {
         });
 
         heardbeatThread = new Thread(() -> {
+            System.out.println("Starting heartbeat thread");
+
             long lastPing = System.currentTimeMillis();
 
             try {
