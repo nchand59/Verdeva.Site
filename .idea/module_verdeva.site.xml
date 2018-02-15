@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_verdeva.site" default="compile.module.verdeva.site">
+  <dirname property="module.verdeva.site.basedir" file="${ant.file.module_verdeva.site}"/>
+  
+  <property name="module.jdk.home.verdeva.site" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.verdeva.site" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.verdeva.site" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.verdeva.site" value="-encoding UTF-8 -source 9 -target 9 ${compiler.args}"/>
+  
+  <property name="verdeva.site.output.dir" value="undefined"/>
+  <property name="verdeva.site.testoutput.dir" value="undefined"/>
+  
+  <path id="verdeva.site.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="verdeva.site.module.production.classpath">
+    <path refid="${module.jdk.classpath.verdeva.site}"/>
+    <path refid="library.commons-daemon-1.1.0.classpath"/>
+  </path>
+  
+  <path id="verdeva.site.runtime.production.module.classpath">
+    <path refid="library.commons-daemon-1.1.0.classpath"/>
+  </path>
+  
+  <path id="verdeva.site.module.classpath">
+    <path refid="${module.jdk.classpath.verdeva.site}"/>
+    <path refid="library.commons-daemon-1.1.0.classpath"/>
+  </path>
+  
+  <path id="verdeva.site.runtime.module.classpath">
+    <path refid="library.commons-daemon-1.1.0.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.verdeva.site">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.verdeva.site">
+    <patternset refid="excluded.from.module.verdeva.site"/>
+  </patternset>
+  
+  
+  <target name="compile.module.verdeva.site" depends="compile.module.verdeva.site.production,compile.module.verdeva.site.tests" description="Compile module Verdeva.Site"/>
+  
+  <target name="compile.module.verdeva.site.production" description="Compile module Verdeva.Site; production classes"/>
+  
+  <target name="compile.module.verdeva.site.tests" depends="compile.module.verdeva.site.production" description="compile module Verdeva.Site; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.verdeva.site" description="cleanup module">
+    <delete dir="${verdeva.site.output.dir}"/>
+    <delete dir="${verdeva.site.testoutput.dir}"/>
+  </target>
+</project>

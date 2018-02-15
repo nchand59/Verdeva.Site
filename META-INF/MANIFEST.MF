@@ -1,0 +1,3 @@
+Manifest-Version: 1.0
+Class-Path: commons-daemon-1.1.0.jar
+
